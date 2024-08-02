@@ -3,45 +3,76 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Compte;
-
+use App\Models\Utilisateur;
 class CompteController extends Controller
 {
     public function store(Request $request)
     {
         $request->validate([
             'Id_util' => 'required|integer|exists:utilisateurs,Id_util',
-            'solde' => 'required|numeric',
-            'date_creation_compte' => 'required|date',
+          
         ]);
 
         $compte = Compte::create([
             'Id_util' => $request->Id_util,
-            'solde' => $request->solde,
-            'date_creation_compte' => $request->date_creation_compte,
+          
         ]);
 
         return response()->json($compte, 201);
     }
 
+    
     public function getCompteById($id)
     {
-        // Récupérer un compte spécifique par Id_compte
-        $compte = Compte::find($id);
-
+        $compte = Compte::with('transactions')->find($id);
+    
         if ($compte) {
+            // Calculer le solde basé sur les transactions
+            $solde = $compte->transactions->reduce(function ($carry, $transaction) {
+                return $transaction->type === 'recette'
+                    ? $carry + $transaction->montan
+                    : $carry - $transaction->montan;
+            }, $compte->solde); // Utiliser le solde initial du compte
+    
             return response()->json([
-                'solde' => $compte->solde,
-                // 'date_creation_compte' => $compte->date_creation_compte->format('Y-m-d'),
-                
+                'solde'                => $solde,
+                // 'date_creation_compte' => $compte->date_creation_compte,
             ]);
         } else {
             return response()->json(['message' => 'Compte non trouvé'], 404);
         }
     }
+    
 
+
+
+
+
+    public function Affiche()
+    {
+        $result = Compte::select(
+            'comptes.Id_compte',
+            'comptes.created_at',
+            'comptes.Id_util',
+            'utilisateurs.Nom_util'
+        )
+        ->join('utilisateurs', 'comptes.Id_util', '=', 'utilisateurs.Id_util')
+    
+        ->get();
+
+        return response()->json($result); 
+    }    
+    
+    //requtte pour la recuperation des donnees
     public function recuperation()
     {
         $compte = Compte::all();
         return response()->json($compte);
     }
-}
+
+
+    public function declarer($id_compte){
+       $compte=Compte::with('transactions')->findOrFail($id_compte);
+       return response()->json($compte);
+    }
+}  

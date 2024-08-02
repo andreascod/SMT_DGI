@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Compte;
 
 class Utilisateur extends Model
 {
@@ -12,11 +13,12 @@ class Utilisateur extends Model
     protected $primaryKey = 'Id_util';
 
     protected $fillable = [
-        'Nom_util', 'email', 'pass', 'role', 'date_create_util',
+        'Nom_util', 'email', 'pass', 'role',
     ];
 
     public function comptes()
     {
         return $this->hasMany(Compte::class, 'Id_util','Id_util');
     }
+   
 }

@@ -12,7 +12,7 @@ class UtilisateurController extends Controller
         'email'=>'required|string|max:50',
         'pass'=>'required|max:8',
         'role'=>'required|string|max:10',
-        'date_create_util'=>'required|date',
+       
        ]);
        if ($validator->fails()) {
         return response()->json(['error' => $validator->errors()], 400);
@@ -65,7 +65,7 @@ class UtilisateurController extends Controller
         'email'=>'required|string|max:50',
         'pass'=>'required|string|max:8',
         'role'=>'required|string|max:10',
-        'date_create_util'=>'required|date',
+        
        ]);
        $utlisateur=Utilisateur::find($id);
        if(!$utlisateur){
@@ -76,7 +76,7 @@ class UtilisateurController extends Controller
        $utilisateur->email=$request->input('email');
        $utilisateur->pass=$request->input('pass');
        $utilisateur->role=$request->input('role');
-       $utilisateur->date_create_util->input('date_create_util');
+       
 
        $utilisateur->save();
        return response()->json(['message'=>'utilisateur trouver',200]);

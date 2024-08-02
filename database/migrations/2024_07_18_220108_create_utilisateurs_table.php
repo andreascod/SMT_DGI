@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string("email")->unique();
             $table->string("pass");
             $table->string("role");
-            $table->date("date_create_util");
+            // $table->date("date_create_util");
             $table->timestamps();
         });
     }

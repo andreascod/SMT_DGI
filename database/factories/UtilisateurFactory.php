@@ -17,7 +17,6 @@ class UtilisateurFactory extends Factory
             'email' => $this->faker->unique()->safeEmail,
             'pass' => bcrypt('password'), // mot de passe hashé
             'role' => $this->faker->randomElement(['admin', 'user']), // exemple de rôles
-            'date_create_util' => $this->faker->date(),
         ];
     }
 }

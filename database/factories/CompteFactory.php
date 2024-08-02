@@ -13,9 +13,9 @@ class CompteFactory extends Factory
     public function definition()
     {
         return [
-            'Id_util' => Utilisateur::factory(), // Assure-toi d'avoir des utilisateurs
+            'Id_util' => Utilisateur::factory(), // Crée un utilisateur si non existant
             'solde' => $this->faker->randomFloat(2, 0, 10000),
-            'date_creation_compte' => $this->faker->date(),
+            // 'date_creation_compte' => $this->faker->date(),
         ];
     }
 }
