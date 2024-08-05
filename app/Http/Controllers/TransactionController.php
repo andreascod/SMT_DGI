@@ -26,7 +26,6 @@ class TransactionController extends Controller
 
          // Optionnel: récupérer et retourner les détails du compte mis à jour /nampidiriko farany
          $compte = Compte::find($request->Id_compte);
-
          return response()->json([
              'transaction' => $transaction,
              'compte'      => $compte,
@@ -34,9 +33,9 @@ class TransactionController extends Controller
     }
     public function getTransactions()
     {
-        // Récupérer les transactions groupées par mois
+        // Récupérer les transactions groupées par minute
         $transactions = Transaction::selectRaw('
-        DATE_FORMAT(created_at, "%Y-%m-%d %H:%i") as minute,
+            DATE_FORMAT(created_at, "%Y-%m-%d %H:%i") as minute,
             SUM(CASE WHEN type = "recette" THEN montan ELSE 0 END) as recette,
             SUM(CASE WHEN type = "depense" THEN montan ELSE 0 END) as depense
         ')
@@ -45,4 +44,38 @@ class TransactionController extends Controller
 
         return response()->json($transactions);
     }
+
+    // select from* transactions where type=depense
+    public function afficheRec(){
+        $transaction=Transaction::where('type','depense',)
+        ->get();
+        return response()->json($transaction);
+    }
+  
+
+
+    // Récupérer les transactions groupées par minute pour un utilisateur spécifique
+    public function getTransaction($id)
+{
+    
+    $transactions = Transaction::selectRaw('
+        DATE_FORMAT(transactions.created_at, "%Y-%m-%d %H:%i") as minute,
+        utilisateurs.Nom_util as utilisateur,
+        SUM(CASE WHEN transactions.type = "recette" THEN transactions.montan ELSE 0 END) as recette,
+        SUM(CASE WHEN transactions.type = "depense" THEN transactions.montan ELSE 0 END) as depense
+    ')
+    ->join('comptes', 'transactions.Id_compte', '=', 'comptes.Id_compte')
+    ->join('utilisateurs', 'comptes.Id_util', '=', 'utilisateurs.Id_util')
+    ->where('utilisateurs.Id_util', $id)
+    ->groupBy('minute','utilisateurs.Nom_util')
+    ->get();
+
+    // Vérifier si des transactions ont été trouvées
+    if ($transactions->isEmpty()) {
+        return response()->json(['message' => 'Compte non trouvé'], 404);
+    }
+
+    return response()->json($transactions);
+}
+
 }

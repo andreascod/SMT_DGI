@@ -10,7 +10,7 @@ class UtilisateurController extends Controller
     $validator = Validator::make($request->all(), [
         'Nom_util'=>'required|string|max:50',
         'email'=>'required|string|max:50',
-        'pass'=>'required|max:8',
+        'pass'=>'required|confirmed',
         'role'=>'required|string|max:10',
        
        ]);
@@ -21,6 +21,10 @@ class UtilisateurController extends Controller
       'email' => $request->email,
       'pass' => Hash::make($request->pass),
   ]);
+  auth()->attempt($request->only('email','pass'));
+
+
+  
     // Générer un jeton d'authentification
     $token = $user->createToken('auth_token')->plainTextToken;
 
@@ -31,10 +35,10 @@ class UtilisateurController extends Controller
    }
      
       // Fonction pour la connexion
-    public function login(Request $request)
+    public function logks(Request $request)
     {
         // Valider les données de la requête
-        $validator = Validator::make($request->all(), [
+        $validator = Utilisateur::make($request->all(), [
             'email' => 'required|email',
             'pass' => 'required',
         ]);
@@ -82,7 +86,7 @@ class UtilisateurController extends Controller
        return response()->json(['message'=>'utilisateur trouver',200]);
    }
    public function Supprimer($id){
-      $utlisateur=Utilisateur::find($id);
+      $utilisateur=Utilisateur::find($id);
       if(!$utilisateur){
         return response()->json(['message'=>'utilisateur non trouver',404]);
       }
@@ -95,5 +99,11 @@ class UtilisateurController extends Controller
     {
         $utilisateurs = Utilisateur::all();
         return response()->json($utilisateurs);
+    }
+    //requete nombre des contribuable
+    public function COUNT(){
+        $utilisateur=Utilisateur::count();
+        dd($utilisateur);
+        return response()->json($utilisateur);
     }
 }

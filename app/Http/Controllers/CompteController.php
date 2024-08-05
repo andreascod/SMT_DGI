@@ -63,7 +63,7 @@ class CompteController extends Controller
         return response()->json($result); 
     }    
     
-    //requtte pour la recuperation des donnees
+    //requete pour la recuperation des donnees
     public function recuperation()
     {
         $compte = Compte::all();
@@ -75,4 +75,11 @@ class CompteController extends Controller
        $compte=Compte::with('transactions')->findOrFail($id_compte);
        return response()->json($compte);
     }
+
+    //   mbola tsy mande
+    public function SUPCompte($id){
+       $compte=Compte::find($id);
+       $compte->delete();
+       return response()->json($compte);
 }  
+}
