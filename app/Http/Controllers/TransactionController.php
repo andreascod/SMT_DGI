@@ -34,18 +34,38 @@ class TransactionController extends Controller
     public function getTransactions()
     {
         // Récupérer les transactions groupées par minute
-        $transactions = Transaction::selectRaw('
-            DATE_FORMAT(created_at, "%Y-%m-%d %H:%i") as minute,
-            SUM(CASE WHEN type = "recette" THEN montan ELSE 0 END) as recette,
-            SUM(CASE WHEN type = "depense" THEN montan ELSE 0 END) as depense
-        ')
-        ->groupBy('minute')
-        ->get();
+        // $transactions = Transaction::selectRaw('
+        //     DATE_FORMAT(created_at, "%Y-%m-%d %H:%i") as minute,
+        //     Utilisateurs.Nom_util as contribuable,
+        //     SUM(CASE WHEN type = "recette" THEN montan ELSE 0 END) as recette,
+        //     SUM(CASE WHEN type = "depense" THEN montan ELSE 0 END) as depense
+        // ')
+        // ->join('comptes', 'transactions.Id_compte', '=', 'comptes.Id_compte')
+        // ->join('utilisateurs', 'comptes.Id_util', '=', 'utilisateurs.Id_util')
+        // ->groupBy('minute','utilisateurs.Nom_util')
+        // ->get();
 
-        return response()->json($transactions);
+        // return response()->json($transactions);
+        $transactions = Transaction::selectRaw('
+        DATE_FORMAT(transactions.created_at, "%Y-%m-%d %H:%i") as minute,
+        utilisateurs.Nom_util as utilisateur,
+        SUM(CASE WHEN transactions.type = "recette" THEN transactions.montan ELSE 0 END) as recette,
+        SUM(CASE WHEN transactions.type = "depense" THEN transactions.montan ELSE 0 END) as depense
+    ')
+    ->join('comptes', 'transactions.Id_compte', '=', 'comptes.Id_compte')
+    ->join('utilisateurs', 'comptes.Id_util', '=', 'utilisateurs.Id_util')
+    ->groupBy('minute','utilisateurs.Nom_util')
+    ->get();
+
+    // Vérifier si des transactions ont été trouvées
+    if ($transactions->isEmpty()) {
+        return response()->json(['message' => 'Compte non trouvé'], 404);
     }
 
-    // select from* transactions where type=depense
+    return response()->json($transactions);
+    }
+
+    // select from* transactions where type=depense 06/08/2024
     public function afficheRec(){
         $transaction=Transaction::where('type','depense',)
         ->get();
@@ -54,9 +74,10 @@ class TransactionController extends Controller
   
 
 
-    // Récupérer les transactions groupées par minute pour un utilisateur spécifique
+    // Récupérer les transactions groupées par minute pour un utilisateur spécifique 06/08/2024
     public function getTransaction($id)
 {
+    // $trans=Transaction::with('transactions')->find($id);
     
     $transactions = Transaction::selectRaw('
         DATE_FORMAT(transactions.created_at, "%Y-%m-%d %H:%i") as minute,
@@ -76,6 +97,12 @@ class TransactionController extends Controller
     }
 
     return response()->json($transactions);
+}
+
+//recuperation Id transaction 
+public function recuperationTransaction(){
+    $transaction=Transaction::all();
+    return response()->json($transaction);
 }
 
 }

@@ -100,7 +100,7 @@ class UtilisateurController extends Controller
         $utilisateurs = Utilisateur::all();
         return response()->json($utilisateurs);
     }
-    //requete nombre des contribuable
+    //requete nombre des contribuable 06/08/2024
     public function COUNT(){
         $utilisateur=Utilisateur::count();
         dd($utilisateur);

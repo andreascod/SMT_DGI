@@ -82,4 +82,16 @@ class CompteController extends Controller
        $compte->delete();
        return response()->json($compte);
 }  
+
+ public function AffichageTableau(){
+    $result =Compte::select(
+         'comptes.Id_compte',
+         'comptes.Id_util',
+         'comptes.solde',
+         'utilisateurs.Nom_util',
+         'utilisateurs.email'
+    )->join('utilisateurs','comptes.Id_util','=','utilisateurs.Id_util')->get();
+
+    return response()->json($result);
+ }
 }
