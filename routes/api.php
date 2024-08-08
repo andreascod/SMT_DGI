@@ -21,9 +21,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 // Routeur pour les cruds d'utilisateur
-Route::get('/utilisateurs',[UtilisateurController::class,'Util']);
+Route::post('/utilisateurs',[UtilisateurController::class,'Util']);
 Route::get('/utilisateurs/recuperer',[UtilisateurController::class,'recuperation']);
-Route::get('/logks',[LoginController::class,'login']);
+Route::post('/logks',[UtilisateurController::class,'login']);
 Route::put('/utilisateurs/{id}',[UtilisateurController::class,'modifier']);
 Route::delete('/utilisateurs/{id}',[UtilisateurController::class,'supprimer']);
 

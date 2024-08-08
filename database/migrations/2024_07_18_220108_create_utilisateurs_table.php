@@ -15,7 +15,7 @@ return new class extends Migration
             $table->increments("Id_util");
             $table->string("Nom_util");
             $table->string("email")->unique();
-            $table->string("pass");
+            $table->string("password");
             $table->string("role");
             // $table->date("date_create_util");
             $table->timestamps();
